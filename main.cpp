@@ -5,7 +5,7 @@ namespace fs = std::filesystem;
 
 void starting_message();
 void display_files();
-bool check_existance(const fs::path& a);
+bool file_exists(const fs::path& a);
 
 
 int main() {
@@ -27,7 +27,7 @@ int main() {
             file_path = project_dir_path + "/" + file_name;
             our_file = file_path;
             //Users/smykolaj/CLionProjects/Project1/test.txt
-            if(check_existance(our_file)) {
+            if(file_exists(our_file)) {
                 break;
             }
             else {
@@ -40,7 +40,7 @@ int main() {
             std::cout << "Please provide the ABSOLUTE path to the file\n";
             std::cin >> file_path;
             our_file = file_path;
-            if(check_existance(our_file)) {
+            if(file_exists(our_file)) {
                 break;
             }
             else {
@@ -87,7 +87,7 @@ void display_files(){
         }
     }
 }
-bool check_existance(const fs::path& a){
+bool file_exists(const fs::path& a){
     if (std::filesystem::exists(a)) {
         std::cout << "Successfully found file\n";
         return true;
