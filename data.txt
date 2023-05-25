@@ -1,7 +1,9 @@
-social
-dkfjdlfk\sflkj
-sdfkljsdf
-@@@@categ_end!!!
+Social
+Banking
+Messenger
+Photo
+Video
+@@@categ_end!!!
 Twitter
 abobamega123
 Social

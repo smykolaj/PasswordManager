@@ -4,6 +4,7 @@
 
 #include <fstream>
 #include "PasswordLibrary.h"
+#include <fmt/ranges.h>
 
 
 PasswordLibrary lib;
@@ -13,11 +14,18 @@ void PasswordLibrary::add_record(const PasswordRecord &rec) {
 records.push_back(rec);
 }
 
+
+
 void PasswordLibrary::write(const fs::path& file) {
     std::ofstream outFile(file);
 
     // categories
+    std::string cat;
 
+    for(std::string a : categories){
+        outFile << a << "\n";
+    }
+    outFile << "@@@categ_end!!!" << "\n";
 
     // passwords
     for(auto i : records ) {
@@ -34,6 +42,15 @@ bool PasswordLibrary::read(const fs::path& fileName) {
     std::ifstream inFile(fileName);
 
     // categories
+    std::string cat;
+
+    for(std::getline(inFile, cat); cat != "@@@categ_end!!!"; std::getline(inFile, cat)){
+        categories.insert(cat);
+    }
+
+    for(std::string a : categories)
+        std::cout << a;
+
 
     // passwords
     while (! inFile.eof()){
