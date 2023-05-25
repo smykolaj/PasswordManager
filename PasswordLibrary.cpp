@@ -5,85 +5,100 @@
 #include <fstream>
 #include "PasswordLibrary.h"
 #include <fmt/ranges.h>
+#include "Crypting.h"
 
 
 PasswordLibrary lib;
+const std::string CATEGORY_DELIMETER = "@@@categ_end!!!";
 
 
-void PasswordLibrary::add_record(const PasswordRecord &rec) {
+void PasswordLibrary::addRecord(const PasswordRecord &rec) {
 records.push_back(rec);
 }
 
 
 
-void PasswordLibrary::write(const fs::path& file) {
-    std::ofstream outFile(file);
+void PasswordLibrary::write() const {
+
+    std::stringstream memoryStream;
+
 
     // categories
     std::string cat;
 
     for(std::string a : categories){
-        outFile << a << "\n";
+        memoryStream << a << "\n";
     }
-    outFile << "@@@categ_end!!!" << "\n";
+    memoryStream << CATEGORY_DELIMETER << "\n";
 
     // passwords
     for(auto i : records ) {
-        outFile << i.getName() << "\n";
-        outFile << i.getPass()<< "\n";
-        outFile << i.getCategory()<< "\n";
-        outFile << i.getWebsite()<< "\n";
-        outFile << i.getLogin()<< "\n";
+        memoryStream << i.getName() << "\n";
+        memoryStream << i.getPass()<< "\n";
+        memoryStream << i.getCategory()<< "\n";
+        memoryStream << i.getWebsite()<< "\n";
+        memoryStream << i.getLogin()<< "\n";
     }
-    outFile.close();
 
+    std::ofstream outFile(workingFileName);
+    Crypting::process(&memoryStream, &outFile);
+    outFile.close();
 }
-bool PasswordLibrary::read(const fs::path& fileName) {
-    std::ifstream inFile(fileName);
+
+bool PasswordLibrary::read() {
+    std::ifstream inFile(workingFileName);
+    std::stringstream memoryStream;
+    if(!Crypting::process(&inFile, &memoryStream)){
+        return false;
+    }
+
+    inFile.close();
 
     // categories
     std::string cat;
-
-    for(std::getline(inFile, cat); cat != "@@@categ_end!!!"; std::getline(inFile, cat)){
-        categories.insert(cat);
+    while (! memoryStream.eof()){
+        std::getline(memoryStream, cat);
+        if(cat == CATEGORY_DELIMETER)
+            break;
+        addCategory(cat);
     }
 
     for(std::string a : categories)
-        std::cout << a;
-
+        std::cout << a << "\n";
 
     // passwords
-    while (! inFile.eof()){
+    while (! memoryStream.eof()){
         PasswordRecord rec;
 
         std::string s;
 
-        std::getline(inFile, s);
+        std::getline(memoryStream, s);
         rec.setName( s );
 
-        if(inFile.eof())
+        if(memoryStream.eof())
             break;
 
-        std::getline(inFile, s);
+        std::getline(memoryStream, s);
         rec.setPass( s );
 
-        std::getline(inFile, s);
+        std::getline(memoryStream, s);
         rec.setCategory( s );
+        addCategory(s);
 
-        std::getline(inFile, s);
+        std::getline(memoryStream, s);
         rec.setWebsite( s );
 
-        std::getline(inFile, s);
+        std::getline(memoryStream, s);
         rec.setLogin( s );
 
 
-
-        add_record(rec);
+        addRecord(rec);
     }
 
-
+    setLastReadTimeToNow();
 }
-void PasswordLibrary::printAllRecords(){
+
+void PasswordLibrary::printAllRecords() const{
     for(auto i : records ) {
         std::cout << i.getName() << "\n";
         std::cout << i.getPass()<< "\n";
@@ -92,3 +107,24 @@ void PasswordLibrary::printAllRecords(){
         std::cout << i.getLogin()<< "\n";
     }
 };
+
+void PasswordLibrary::addCategory(const std::string &category) {
+    categories.insert(category);
+}
+
+void PasswordLibrary::deleteCategory(const std::string &category) {
+    categories.erase(category);
+}
+
+void PasswordLibrary::setLastReadTimeToNow() {
+    lastReadTime = std::time(nullptr);
+}
+
+std::time_t PasswordLibrary::getLastReadTime() const {
+    return lastReadTime;
+}
+
+void PasswordLibrary::setWorkingFileName(const fs::path &fileName) {
+    workingFileName = fileName;
+}
+

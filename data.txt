@@ -1,7 +1,8 @@
-Social
 Banking
+Messages
 Messenger
 Photo
+Social
 Video
 @@@categ_end!!!
 Twitter

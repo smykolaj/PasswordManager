@@ -13,15 +13,28 @@ namespace fs = std::filesystem;
 
 class PasswordLibrary {
 private:
-
-public:
+    fs::path workingFileName;
+    std::time_t lastReadTime;
     std::vector< PasswordRecord > records;
     std::set <std::string> categories;
 
-    void add_record( const PasswordRecord& rec );
-    void write( const fs::path& file);
-    bool read(const fs::path& file);
-    void printAllRecords();
+public:
+    //File
+    void setWorkingFileName(const fs::path& fileName);
+
+    // Records
+    void addRecord(const PasswordRecord& rec );
+    void write() const;
+    bool read();
+    void printAllRecords() const;
+
+    // Categories
+    void addCategory(const std::string& category);
+    void deleteCategory(const std::string& category);
+
+    // Last read time
+    void setLastReadTimeToNow();
+    std::time_t getLastReadTime() const;
 //    static bool save( file_name, const PasswordLibrary& library );
 };
 

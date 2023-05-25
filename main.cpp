@@ -9,21 +9,25 @@ void starting_message();
 
 void display_files();
 bool file_exists(const fs::path& a);
-void create_sample_data(fs::path);
+void create_sample_data();
 fs::path read_from();
 
 int main() {
+
     fs::path our_file = read_from();
-    std::cout<<our_file;
+    std::cout << our_file << "\n";
     if(our_file == "")
         return 0;
 
-
+    lib.setWorkingFileName(our_file);
     //lib.create_sample_data();
-   // lib.write(our_file);
 
-   lib.read( our_file );
-   lib.printAllRecords();
+    if(file_exists(our_file)) {
+        lib.read();
+    } else create_sample_data();
+
+    lib.write();
+    lib.printAllRecords();
 
 
 
@@ -37,10 +41,11 @@ void starting_message(){
                "Please choose the source file\n"
                "Press 1 for list of existing files or\n"
                "Press 2 to provide an absolute path to the file\n"
+               "Press 3 to create a new file\n"
                "Press 0 to exit\n");
 }
 void display_files(){
-    std::filesystem::path directoryPath = fs::current_path().parent_path();
+    fs::path directoryPath = fs::current_path().parent_path();
 
 // Iterate over the files in the directory
     for (const auto& file : std::filesystem::directory_iterator(directoryPath)) {
@@ -64,7 +69,7 @@ bool file_exists(const fs::path& a){
         return false;
     }
 };
-void create_sample_data(fs::path a){
+void create_sample_data(){
 
     PasswordRecord one("Twitter", "abobamega123", "Social", "","");
     PasswordRecord two("IKO", "abobamega123", "Banking", "iko.com","sm");
@@ -73,14 +78,14 @@ void create_sample_data(fs::path a){
     PasswordRecord five("Messenger", "abobamega123", "Messages", "messenger.com","sm");
     PasswordRecord six("Pinterest", "abobamega123", "Photo", "pinterest.com","sm");
     PasswordRecord seven("Netflix", "abobamega123", "Video", "netflix.com","sm");
-    lib.add_record(one);
-    lib.add_record(two);
-    lib.add_record(three);
-    lib.add_record(four);
-    lib.add_record(five);
-    lib.add_record(six);
-    lib.add_record(seven);
-    lib.write(a);
+    lib.addRecord(one);
+    lib.addRecord(two);
+    lib.addRecord(three);
+    lib.addRecord(four);
+    lib.addRecord(five);
+    lib.addRecord(six);
+    lib.addRecord(seven);
+
 };
 
 fs::path read_from(){
@@ -121,6 +126,14 @@ fs::path read_from(){
             else {
                 continue;
             }
+
+        }
+        else if (source_choice == "3") {
+            std::cout << "Please provide the new name for the file\n";
+            std::cin >> file_name;
+            file_path = project_dir_path + "/" + file_name;
+            our_file = file_path;
+            return our_file;
 
         }
 
