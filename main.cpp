@@ -4,6 +4,7 @@
 #include "PasswordRecord.h"
 #include "PasswordLibrary.h"
 #include "Crypting.h"
+#include <algorithm>
 namespace fs = std::filesystem;
 
 void starting_message();
@@ -13,6 +14,22 @@ bool file_exists(const fs::path& a);
 void create_sample_data();
 fs::path read_from();
 void askForFilePassword();
+void mainFunctionality();
+std::string mainMenu();
+
+void createNewCategory();
+
+void deleteCategory();
+
+void addPassword();
+
+void editPassword();
+
+void deletePassword();
+
+void sortPasswords();
+
+void searchPassword();
 
 int main() {
 
@@ -30,7 +47,9 @@ int main() {
         askForFilePassword();
         create_sample_data();
     }
-    //lib.write();
+    lib.printAllRecords();
+    mainFunctionality();
+    lib.write();
     lib.printAllRecords();
 
 
@@ -47,6 +66,20 @@ void starting_message(){
                "Press 2 to provide an absolute path to the file\n"
                "Press 3 to create a new file\n"
                "Press 0 to exit\n");
+}
+
+std::string mainMenu(){
+    fmt::print("Press 1 to add a new category\n"
+               "Press 2 to delete a category and all assigned passwords\n"
+               "Press 3 to add a password\n"
+               "Press 4 to edit a password\n"
+               "Press 5 to delete passwords\n"
+               "Press 6 to sort passwords\n"
+               "Press 7 to search passwords\n"
+               "Press 0 to exit\n");
+    std::string choice;
+    std::cin >> choice;
+    return choice;
 }
 
 void display_files(){
@@ -168,4 +201,103 @@ void askForFilePassword(){
     std::string pass;
     std::cin >> pass;
     Crypting::setFilePassword(pass);
+}
+
+void mainFunctionality(){
+    std::string choice;
+    choice = mainMenu();
+    while (choice != "0") {
+        if (choice == "1")
+            createNewCategory();
+        else if (choice == "2")
+            deleteCategory();
+        else if (choice == "3")
+            addPassword();
+        else if (choice == "4")
+            editPassword();
+        else if (choice == "5")
+            deletePassword();
+        else if (choice == "6")
+            sortPasswords();
+        else if (choice == "7")
+            searchPassword();
+        else if (choice == "0")
+            return;
+        else {
+            std::cout << "Wrong input!";
+            continue;
+        }
+        choice = mainMenu();
+    }
+}
+
+void searchPassword() {
+
+}
+
+void sortPasswords() {
+
+}
+
+void deletePassword() {
+
+}
+
+void editPassword() {
+
+}
+
+void addPassword() {
+
+}
+
+void deleteCategory() {
+    bool finish = false;
+    while (!finish) {
+        fmt::print("Printing all existing categories\n{}\n", lib.getCategories());
+        fmt::print("Enter a name of the new category you would like to delete or enter 0 to exit.\n");
+        std::string newCateg;
+        std::cin >> newCateg;
+        if (newCateg == "0") {
+            finish = true;
+            break;
+        }
+
+        lib.addCategory(newCateg);
+        fmt::print("Done. Would you like to add one more? y/n\n");
+        std::string choice;
+        std::cin >> choice;
+        if (choice == "y" || choice == "yes")
+            continue;
+        else
+            finish = true;
+
+    }
+}
+
+void createNewCategory() {
+    bool finish = false;
+    while (!finish) {
+        fmt::print("Printing all existing categories\n{}\n", lib.getCategories());
+        fmt::print("Enter a name of the new category you would like to add or enter 0 to exit.\n");
+        std::string delCateg;
+        std::cin >> delCateg;
+        if(delCateg == "0") {
+            finish = true;
+            break;
+        }
+        lib.deleteCategory(delCateg);
+
+
+
+        fmt::print("Done. Would you like to delete one more? y/n\n");
+        std::string choice;
+        std::cin >> choice;
+        if (choice == "y" || choice == "yes")
+            continue;
+        else
+            finish = true;
+    }
+
+
 }

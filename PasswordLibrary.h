@@ -28,6 +28,7 @@ public:
 
     // Records
     void addRecord(const PasswordRecord& rec );
+    void deleteRecordByCategory(const std::string& categ);
     void write() const;
     bool read();
     void printAllRecords() const;
@@ -35,6 +36,7 @@ public:
     // Categories
     void addCategory(const std::string& category);
     void deleteCategory(const std::string& category);
+    std::set <std::string> getCategories();
 
     // Last read time
     void setLastReadTimeToNow();

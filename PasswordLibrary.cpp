@@ -6,6 +6,7 @@
 #include "PasswordLibrary.h"
 #include <fmt/ranges.h>
 #include "Crypting.h"
+#include <algorithm>
 
 
 PasswordLibrary lib;
@@ -59,7 +60,7 @@ bool PasswordLibrary::read() {
     //Line for checking the right password
     std::string identifier;
     std::getline(memoryStream, identifier);
-    std::cout << identifier;
+   // std::cout << identifier;
     if(identifier != CRYPTING_IDENTIFIER) {
         std::cout << "The password you entered is wrong, try again!";
         return false;
@@ -67,6 +68,7 @@ bool PasswordLibrary::read() {
 
     // categories
     std::string cat;
+    std::cout << "\n";
     while (! memoryStream.eof()){
         std::getline(memoryStream, cat);
         if(cat == CATEGORY_DELIMETER)
@@ -119,6 +121,7 @@ void PasswordLibrary::printAllRecords() const{
         std::cout << i.getCategory()<< "\n";
         std::cout << i.getWebsite()<< "\n";
         std::cout << i.getLogin()<< "\n";
+        std::cout << "\n";
     }
 };
 
@@ -140,5 +143,13 @@ std::time_t PasswordLibrary::getLastReadTime() const {
 
 void PasswordLibrary::setWorkingFileName(const fs::path &fileName) {
     workingFileName = fileName;
+}
+
+std::set<std::string> PasswordLibrary::getCategories() {
+    return categories;
+}
+
+void PasswordLibrary::deleteRecordByCategory(const string &categ) {
+    std::ranges::remove_if(records, [categ](const PasswordRecord s) -> bool{ categ == s.getCategory(); });
 }
 
