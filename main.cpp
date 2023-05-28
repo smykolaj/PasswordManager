@@ -15,7 +15,7 @@ fs::path read_from();
 int main() {
 
     fs::path our_file = read_from();
-    std::cout << our_file << "\n";
+    //std::cout << our_file << "\n";
     if(our_file == "")
         return 0;
 
@@ -71,13 +71,13 @@ bool file_exists(const fs::path& a){
 };
 void create_sample_data(){
 
-    PasswordRecord one("Twitter", "abobamega123", "Social", "","");
-    PasswordRecord two("IKO", "abobamega123", "Banking", "iko.com","sm");
-    PasswordRecord three("Tiktok", "abobamega123", "Social", "tiktok.com","sm");
-    PasswordRecord four("Snapchat", "abobamega123", "Social", "snapchat.com","sm");
-    PasswordRecord five("Messenger", "abobamega123", "Messages", "messenger.com","sm");
-    PasswordRecord six("Pinterest", "abobamega123", "Photo", "pinterest.com","sm");
-    PasswordRecord seven("Netflix", "abobamega123", "Video", "netflix.com","sm");
+    PasswordRecord one("Twitter", "ADHFNV8Cgood", "Social", "","");
+    PasswordRecord two("IKO", "BLYe9buxgood", "Banking", "","+380666999185");
+    PasswordRecord three("Tiktok", "yJA7Pjyugood", "Social", "tiktok.com","smykolaj");
+    PasswordRecord four("Snapchat", "Z6PfHbZxgood", "Social", "snapchat.com","");
+    PasswordRecord five("Messenger", "EZvt7qsJgood", "Messages", "messenger.com","something");
+    PasswordRecord six("Pinterest", "kEzeCfsAgood", "Photo", "pinterest.com","loser");
+    PasswordRecord seven("Netflix", "rgWb3BMTgood", "Video", "netflix.com","greatwathcher");
     lib.addRecord(one);
     lib.addRecord(two);
     lib.addRecord(three);
@@ -85,6 +85,12 @@ void create_sample_data(){
     lib.addRecord(five);
     lib.addRecord(six);
     lib.addRecord(seven);
+    lib.addCategory("Social");
+    lib.addCategory("Banking");
+    lib.addCategory("Messages");
+    lib.addCategory("Photo");
+    lib.addCategory("Video");
+
 
 };
 

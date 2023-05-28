@@ -18,45 +18,17 @@ public:
             const string &name, const string &pass, const string &category, const string &website,const string &login) :
                     name(name), pass(pass), category(category), website(website), login(login) {}
 
-    const string &getName() const {
-        return name;
-    }
+    const string &getName() const;
+    const string &getPass() const;
+    const string &getCategory() const;
+    const string &getWebsite() const;
+    const string &getLogin() const;
 
-    const string &getPass() const {
-        return pass;
-    }
-
-    const string &getCategory() const {
-        return category;
-    }
-
-    const string &getWebsite() const {
-        return website;
-    }
-
-    const string &getLogin() const {
-        return login;
-    }
-
-    void setName(const string &name) {
-        this->name = name;
-    }
-
-    void setPass(const string &pass) {
-        this->pass = pass;
-    }
-
-    void setCategory(const string &category) {
-        this->category = category;
-    }
-
-    void setWebsite(const string &website) {
-        this->website = website;
-    }
-
-    void setLogin(const string &login) {
-        this->login = login;
-    }
+    void setName(const string &name);
+    void setPass(const string &pass);
+    void setCategory(const string &category);
+    void setWebsite(const string &website);
+    void setLogin(const string &login);
 
 };
 

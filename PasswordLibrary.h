@@ -13,9 +13,13 @@ namespace fs = std::filesystem;
 
 class PasswordLibrary {
 private:
+    //file
     fs::path workingFileName;
+    //time
     std::time_t lastReadTime;
+    //all passwords
     std::vector< PasswordRecord > records;
+    //all categories
     std::set <std::string> categories;
 
 public:

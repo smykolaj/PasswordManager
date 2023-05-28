@@ -63,8 +63,11 @@ bool PasswordLibrary::read() {
         addCategory(cat);
     }
 
+    //display categories to console
+
     for(std::string a : categories)
         std::cout << a << "\n";
+
 
     // passwords
     while (! memoryStream.eof()){
