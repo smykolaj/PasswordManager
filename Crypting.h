@@ -9,8 +9,14 @@
 
 
 class Crypting {
+private:
+  static std::string filePassword;
+
 public:
     static bool process(std::istream* input, std::ostream* output);
+
+     static std::string getFilePassword();
+     static void setFilePassword(std::string pass);
 };
 
 

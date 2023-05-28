@@ -7,12 +7,13 @@
 #include "Crypting.h"
 #include <iostream>
 
-std::string password = "123";
+std::string Crypting::filePassword;
+
 
 // Function to encode a text file using XOR encryption
 bool Crypting::process(std::istream* input, std::ostream* output) // static
 {
-
+    std::string password = getFilePassword();
     char ch;
     std::size_t passwordIndex = 0;
 
@@ -23,4 +24,12 @@ bool Crypting::process(std::istream* input, std::ostream* output) // static
     }
 
     return true;
+}
+
+std::string Crypting::getFilePassword() {
+    return filePassword;
+}
+
+void Crypting::setFilePassword(std::string pass) {
+    filePassword = pass;
 }

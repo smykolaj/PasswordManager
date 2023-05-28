@@ -10,6 +10,7 @@
 
 PasswordLibrary lib;
 const std::string CATEGORY_DELIMETER = "@@@categ_end!!!";
+const std::string CRYPTING_IDENTIFIER = "@@@decryption!!!";
 
 
 void PasswordLibrary::addRecord(const PasswordRecord &rec) {
@@ -22,10 +23,11 @@ void PasswordLibrary::write() const {
 
     std::stringstream memoryStream;
 
+    //Line for checking the right password
+    memoryStream << CRYPTING_IDENTIFIER << "\n";
 
     // categories
     std::string cat;
-
     for(std::string a : categories){
         memoryStream << a << "\n";
     }
@@ -53,6 +55,15 @@ bool PasswordLibrary::read() {
     }
 
     inFile.close();
+
+    //Line for checking the right password
+    std::string identifier;
+    std::getline(memoryStream, identifier);
+    std::cout << identifier;
+    if(identifier != CRYPTING_IDENTIFIER) {
+        std::cout << "The password you entered is wrong, try again!";
+        return false;
+    }
 
     // categories
     std::string cat;

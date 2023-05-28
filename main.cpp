@@ -3,6 +3,7 @@
 #include <filesystem>
 #include "PasswordRecord.h"
 #include "PasswordLibrary.h"
+#include "Crypting.h"
 namespace fs = std::filesystem;
 
 void starting_message();
@@ -11,6 +12,7 @@ void display_files();
 bool file_exists(const fs::path& a);
 void create_sample_data();
 fs::path read_from();
+void askForFilePassword();
 
 int main() {
 
@@ -20,13 +22,15 @@ int main() {
         return 0;
 
     lib.setWorkingFileName(our_file);
-    //lib.create_sample_data();
 
     if(file_exists(our_file)) {
+        askForFilePassword();
         lib.read();
-    } else create_sample_data();
-
-    lib.write();
+    } else {
+        askForFilePassword();
+        create_sample_data();
+    }
+    //lib.write();
     lib.printAllRecords();
 
 
@@ -44,6 +48,7 @@ void starting_message(){
                "Press 3 to create a new file\n"
                "Press 0 to exit\n");
 }
+
 void display_files(){
     fs::path directoryPath = fs::current_path().parent_path();
 
@@ -58,6 +63,7 @@ void display_files(){
         }
     }
 }
+
 bool file_exists(const fs::path& a){
     if (std::filesystem::exists(a)) {
         std::cout << "Successfully found file\n";
@@ -68,7 +74,8 @@ bool file_exists(const fs::path& a){
         std::cerr.flush();
         return false;
     }
-};
+}
+
 void create_sample_data(){
 
     PasswordRecord one("Twitter", "ADHFNV8Cgood", "Social", "","");
@@ -92,7 +99,7 @@ void create_sample_data(){
     lib.addCategory("Video");
 
 
-};
+}
 
 fs::path read_from(){
     std::string source_choice;
@@ -156,3 +163,9 @@ fs::path read_from(){
     return our_file;
 }
 
+void askForFilePassword(){
+    std::cout << "Please enter the password for the chosen file\n";
+    std::string pass;
+    std::cin >> pass;
+    Crypting::setFilePassword(pass);
+}
