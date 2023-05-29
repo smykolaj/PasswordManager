@@ -151,5 +151,6 @@ std::set<std::string> PasswordLibrary::getCategories() {
 
 void PasswordLibrary::deleteRecordByCategory(const string &categ) {
     std::ranges::remove_if(records, [categ](const PasswordRecord s) -> bool{ categ == s.getCategory(); });
+    records.resize(records.size()-1);
 }
 

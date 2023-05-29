@@ -40,6 +40,7 @@ int main() {
 
     lib.setWorkingFileName(our_file);
 
+
     if(file_exists(our_file)) {
         askForFilePassword();
         lib.read();
@@ -51,6 +52,7 @@ int main() {
     mainFunctionality();
     lib.write();
     lib.printAllRecords();
+
 
 
 
@@ -251,11 +253,11 @@ void addPassword() {
 
 }
 
-void deleteCategory() {
+void createNewCategory() {
     bool finish = false;
     while (!finish) {
         fmt::print("Printing all existing categories\n{}\n", lib.getCategories());
-        fmt::print("Enter a name of the new category you would like to delete or enter 0 to exit.\n");
+        fmt::print("Enter a name of the new category you would like to add or enter 0 to exit.\n");
         std::string newCateg;
         std::cin >> newCateg;
         if (newCateg == "0") {
@@ -275,11 +277,11 @@ void deleteCategory() {
     }
 }
 
-void createNewCategory() {
+void deleteCategory() {
     bool finish = false;
     while (!finish) {
         fmt::print("Printing all existing categories\n{}\n", lib.getCategories());
-        fmt::print("Enter a name of the new category you would like to add or enter 0 to exit.\n");
+        fmt::print("Enter a name of the new category you would like to delete or enter 0 to exit.\n");
         std::string delCateg;
         std::cin >> delCateg;
         if(delCateg == "0") {
@@ -287,7 +289,7 @@ void createNewCategory() {
             break;
         }
         lib.deleteCategory(delCateg);
-
+        lib.deleteRecordByCategory(delCateg);
 
 
         fmt::print("Done. Would you like to delete one more? y/n\n");
