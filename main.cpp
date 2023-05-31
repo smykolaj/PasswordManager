@@ -314,41 +314,42 @@ void editPassword() {
                     i->setName(newEntry);
                     break;
                 }
-            else if (choice == "2")
+            if (choice == "2")
                 if(askForConfirmation()) {
                     i->setPass(newEntry);
                     break;
                 }
-            else if (choice == "3")
+            if (choice == "3")
                 if(askForConfirmation() and lib.getCategories().contains(newEntry)) {
                     i->setCategory(newEntry);
                     break;
                 }
                 else {
-                    std::cout << "Such category doesn't exist. Would you like to create it?";
+                    std::cout << "Such category doesn't exist. It can be created\n";
                     if (askForConfirmation()) {
                         lib.addCategory(newEntry);
                         i->setCategory(newEntry);
                         break;
                     }
                 }
-            else if (choice == "4")
+            if (choice == "4")
                 if(askForConfirmation()) {
                     i->setWebsite(newEntry);
                     break;
                 }
-            else if (choice == "5")
+            if (choice == "5")
                 if(askForConfirmation()) {
                     i->setLogin(newEntry);
                     break;
                 }
-            else if (choice == "0")
+            if (choice == "0")
                 return;
             else {
                 std::cout << "Wrong input!";
                 continue;
             }
         }
+
     }
 
 
