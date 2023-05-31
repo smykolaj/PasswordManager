@@ -13,7 +13,8 @@ private:
    std::string filePassword;
 
 public:
-     bool process(std::istream* input, std::ostream* output);
+
+     bool process(std::istream* input, std::ostream* output, int len = 0);
 
       std::string getFilePassword();
       void setFilePassword(std::string pass);

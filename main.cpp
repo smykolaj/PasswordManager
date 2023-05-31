@@ -24,10 +24,10 @@ void addPassword();
 void editPassword();
 void deletePassword();
 void sortPasswords();
-std::vector<PasswordRecord> searchPassword();
+std::vector<PasswordRecord*> searchPassword();
 
 int main() {
-    std::cout << lib.getLastReadTime();
+
     fs::path our_file = read_from();
 
     //std::cout << our_file << "\n";
@@ -230,7 +230,7 @@ void mainFunctionality(){
     }
 }
 
-std::vector<PasswordRecord> searchPassword() {
+std::vector<PasswordRecord*> searchPassword() {
     std::string choice;
     fmt::print("By which parameter would you like to get your record?\n"
            "Press 1 to search by name\n"
@@ -278,7 +278,7 @@ for(auto i : searchPassword()){
     std::string choice;
     std::cin >> choice;
     if(choice == "y" or choice == "yes")
-        lib.deleteRecord(i);
+        lib.deleteRecord(*i);
     else
         continue;
 }
@@ -311,35 +311,35 @@ void editPassword() {
             std::cin >> newEntry;
             if (choice == "1")
                 if (askForConfirmation()) {
-                    i.setName(newEntry);
+                    i->setName(newEntry);
                     break;
                 }
             else if (choice == "2")
                 if(askForConfirmation()) {
-                    i.setPass(newEntry);
+                    i->setPass(newEntry);
                     break;
                 }
             else if (choice == "3")
                 if(askForConfirmation() and lib.getCategories().contains(newEntry)) {
-                    i.setCategory(newEntry);
+                    i->setCategory(newEntry);
                     break;
                 }
                 else {
                     std::cout << "Such category doesn't exist. Would you like to create it?";
                     if (askForConfirmation()) {
                         lib.addCategory(newEntry);
-                        i.setCategory(newEntry);
+                        i->setCategory(newEntry);
                         break;
                     }
                 }
             else if (choice == "4")
                 if(askForConfirmation()) {
-                    i.setWebsite(newEntry);
+                    i->setWebsite(newEntry);
                     break;
                 }
             else if (choice == "5")
                 if(askForConfirmation()) {
-                    i.setLogin(newEntry);
+                    i->setLogin(newEntry);
                     break;
                 }
             else if (choice == "0")

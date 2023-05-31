@@ -18,6 +18,23 @@ void PasswordLibrary::addRecord(const PasswordRecord &rec) {
 records.push_back(rec);
 }
 
+void PasswordLibrary::writeLastReadTime() const {
+    std::fstream outFile(workingFileName);
+    char buff[20];
+    strftime(buff, 20, "%Y-%m-%d %H:%M:%S", localtime(&lastReadTime));
+
+    std::stringstream memoryStream;
+    memoryStream << buff;
+    //outFile << buff;
+
+    Crypting crypting;
+    crypting.setFilePassword("123");
+    crypting.process(&memoryStream, &outFile);
+
+    outFile.close();
+};
+
+
 void PasswordLibrary::write() const {
 
     std::stringstream memoryStream;
@@ -43,6 +60,17 @@ void PasswordLibrary::write() const {
 
     std::ofstream outFile(workingFileName);
 
+    char buff[20];
+    strftime(buff, 20, "%Y-%m-%d %H:%M:%S", localtime(&lastReadTime));
+
+    std::stringstream timeStream;
+    timeStream << buff;
+    //outFile << buff;
+
+    Crypting timeCrypting;
+    timeCrypting.setFilePassword("123");
+    timeCrypting.process(&timeStream, &outFile);
+
     Crypting crypting;
     crypting.setFilePassword(filePassword);
     crypting.process(&memoryStream, &outFile);
@@ -53,9 +81,17 @@ void PasswordLibrary::write() const {
 bool PasswordLibrary::read() {
 
     std::ifstream inFile(workingFileName);
+
+    // load last read time
+    char buff[20];
+    inFile.get(buff, 20);
+    std::cout << buff << "\n";
+
+    // decode whole file to memory stream
     std::stringstream memoryStream;
     Crypting crypting;
     crypting.setFilePassword(filePassword);
+
     if(!crypting.process(&inFile, &memoryStream)){
         return false;
     }
@@ -68,6 +104,8 @@ bool PasswordLibrary::read() {
    // std::cout << identifier;
     if(identifier != CRYPTING_IDENTIFIER) {
         std::cout << "The password you entered is wrong, try again!";
+        lib.setLastReadTimeToNow();
+        lib.writeLastReadTime();
         return false;
     }
 
@@ -164,43 +202,45 @@ void PasswordLibrary::deleteRecordByCategory(const string &categ) {
     records.erase(range_remove.begin(),range_remove.end());
 }
 
-std::vector<PasswordRecord> PasswordLibrary::searchRecordBy(const std::string& attribute) const  {
+std::vector<PasswordRecord*> PasswordLibrary::searchRecordBy(const std::string& attribute) const  {
     fmt::print ("Please enter the data for search\n");
     std::string data;
     std::cin >> data;
-    std::vector<PasswordRecord> foundRecordsByAttribute;
+    std::vector<PasswordRecord*> foundRecordsByAttribute;
 
     // copy_if
 
-    for(auto i : records){
+    for(auto it = records.begin(); it != records.end(); ++it ){
+        PasswordRecord* rec = const_cast< PasswordRecord* >( &(*it) );
+
         if(attribute == "name"){
-            if(i.getName() == data){
-                printRecord(i);
-                foundRecordsByAttribute.push_back(i);
+            if(rec->getName() == data){
+                printRecord(*rec);
+                foundRecordsByAttribute.push_back(rec);
             }
         }
         else if(attribute == "password"){
-            if(i.getPass() == data){
-                printRecord(i);
-                foundRecordsByAttribute.push_back(i);
+            if(rec->getPass() == data){
+                printRecord(*rec);
+                foundRecordsByAttribute.push_back(rec);
             }
         }
         else if(attribute == "category"){
-            if(i.getCategory() == data){
-                printRecord(i);
-                foundRecordsByAttribute.push_back(i);
+            if(rec->getCategory() == data){
+                printRecord(*rec);
+                foundRecordsByAttribute.push_back(rec);
             }
         }
         else if(attribute == "website"){
-            if(i.getWebsite() == data){
-                printRecord(i);
-                foundRecordsByAttribute.push_back(i);
+            if(rec->getWebsite() == data){
+                printRecord(*rec);
+                foundRecordsByAttribute.push_back(rec);
             }
         }
         else if(attribute == "login"){
-            if(i.getLogin() == data){
-                printRecord(i);
-                foundRecordsByAttribute.push_back(i);
+            if(rec->getLogin() == data){
+                printRecord(*rec);
+                foundRecordsByAttribute.push_back(rec);
             }
         }
         else
@@ -211,8 +251,10 @@ std::vector<PasswordRecord> PasswordLibrary::searchRecordBy(const std::string& a
     return foundRecordsByAttribute;
 }
 
-void PasswordLibrary::deleteRecord(PasswordRecord rec) {
-    auto range_remove = std::ranges::remove_if(records, [rec](PasswordRecord s) -> bool{ (s.getName() == rec.getName() && s.getPass()==rec.getPass());});
+void PasswordLibrary::deleteRecord( const PasswordRecord& rec) {
+    auto range_remove =
+            std::ranges::remove_if(records, [rec](const PasswordRecord& s) ->
+                bool{ (s.getName() == rec.getName() && s.getPass()==rec.getPass());});
     records.erase(range_remove.begin(),range_remove.end());
 
 }
