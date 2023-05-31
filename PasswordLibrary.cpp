@@ -59,6 +59,7 @@ void PasswordLibrary::write() const {
     }
 
     std::ofstream outFile(workingFileName);
+    lib.setLastReadTimeToNow();
 
     char buff[20];
     strftime(buff, 20, "%Y-%m-%d %H:%M:%S", localtime(&lastReadTime));
