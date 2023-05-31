@@ -18,8 +18,6 @@ void PasswordLibrary::addRecord(const PasswordRecord &rec) {
 records.push_back(rec);
 }
 
-
-
 void PasswordLibrary::write() const {
 
     std::stringstream memoryStream;
@@ -49,6 +47,7 @@ void PasswordLibrary::write() const {
 }
 
 bool PasswordLibrary::read() {
+
     std::ifstream inFile(workingFileName);
     std::stringstream memoryStream;
     if(!Crypting::process(&inFile, &memoryStream)){
@@ -77,11 +76,11 @@ bool PasswordLibrary::read() {
     }
 
     //display categories to console
-
+/*
     for(std::string a : categories)
         std::cout << a << "\n";
 
-
+*/
     // passwords
     while (! memoryStream.eof()){
         PasswordRecord rec;
@@ -116,14 +115,19 @@ bool PasswordLibrary::read() {
 
 void PasswordLibrary::printAllRecords() const{
     for(auto i : records ) {
-        std::cout << i.getName() << "\n";
-        std::cout << i.getPass()<< "\n";
-        std::cout << i.getCategory()<< "\n";
-        std::cout << i.getWebsite()<< "\n";
-        std::cout << i.getLogin()<< "\n";
-        std::cout << "\n";
+        PasswordLibrary::printRecord(i);
     }
-};
+}
+
+void PasswordLibrary::printRecord(PasswordRecord rec) const {
+    std::cout << rec.getName() << "\n";
+    std::cout << rec.getPass()<< "\n";
+    std::cout << rec.getCategory()<< "\n";
+    std::cout << rec.getWebsite()<< "\n";
+    std::cout << rec.getLogin()<< "\n";
+    std::cout << "\n";
+
+}
 
 void PasswordLibrary::addCategory(const std::string &category) {
     categories.insert(category);
@@ -150,8 +154,60 @@ std::set<std::string> PasswordLibrary::getCategories() {
 }
 
 void PasswordLibrary::deleteRecordByCategory(const string &categ) {
-    int numberOfDeleted = 0;
-    auto range_remove = std::ranges::remove_if(records, [categ, numberOfDeleted](const PasswordRecord s) -> bool{categ == s.getCategory();});
+    auto range_remove = std::ranges::remove_if(records, [categ](const PasswordRecord s) -> bool{categ == s.getCategory();});
     records.erase(range_remove.begin(),range_remove.end());
+}
+
+std::vector<PasswordRecord> PasswordLibrary::searchRecordBy(const std::string& attribute) const  {
+    fmt::print ("Please enter the data for search\n");
+    std::string data;
+    std::cin >> data;
+    std::vector<PasswordRecord> foundRecordsByAttribute;
+
+    // copy_if
+
+    for(auto i : records){
+        if(attribute == "name"){
+            if(i.getName() == data){
+                printRecord(i);
+                foundRecordsByAttribute.push_back(i);
+            }
+        }
+        else if(attribute == "password"){
+            if(i.getPass() == data){
+                printRecord(i);
+                foundRecordsByAttribute.push_back(i);
+            }
+        }
+        else if(attribute == "category"){
+            if(i.getCategory() == data){
+                printRecord(i);
+                foundRecordsByAttribute.push_back(i);
+            }
+        }
+        else if(attribute == "website"){
+            if(i.getWebsite() == data){
+                printRecord(i);
+                foundRecordsByAttribute.push_back(i);
+            }
+        }
+        else if(attribute == "login"){
+            if(i.getLogin() == data){
+                printRecord(i);
+                foundRecordsByAttribute.push_back(i);
+            }
+        }
+        else
+            std::cout << "Wrong input!!!\n";
+    }
+    if (foundRecordsByAttribute.empty())
+        std::cout << "Not found\n";
+    return foundRecordsByAttribute;
+}
+
+void PasswordLibrary::deleteRecord(PasswordRecord rec) {
+    auto range_remove = std::ranges::remove_if(records, [rec](PasswordRecord s) -> bool{ (s.getName() == rec.getName() && s.getPass()==rec.getPass());});
+    records.erase(range_remove.begin(),range_remove.end());
+
 }
 

@@ -28,10 +28,13 @@ public:
 
     // Records
     void addRecord(const PasswordRecord& rec );
+    void deleteRecord(PasswordRecord rec);
     void deleteRecordByCategory(const std::string& categ);
     void write() const;
     bool read();
+    void printRecord(PasswordRecord rec) const;
     void printAllRecords() const;
+    std::vector<PasswordRecord> searchRecordBy(const std::string& attribute)const ;
 
     // Categories
     void addCategory(const std::string& category);

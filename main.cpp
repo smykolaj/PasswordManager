@@ -5,35 +5,31 @@
 #include "PasswordLibrary.h"
 #include "Crypting.h"
 #include <algorithm>
+
 namespace fs = std::filesystem;
 
 void starting_message();
-
 void display_files();
 bool file_exists(const fs::path& a);
 void create_sample_data();
 fs::path read_from();
 void askForFilePassword();
+bool askForConfirmation();
+//commands
 void mainFunctionality();
 std::string mainMenu();
-
 void createNewCategory();
-
 void deleteCategory();
-
 void addPassword();
-
 void editPassword();
-
 void deletePassword();
-
 void sortPasswords();
-
-void searchPassword();
+std::vector<PasswordRecord> searchPassword();
 
 int main() {
-
+    std::cout << lib.getLastReadTime();
     fs::path our_file = read_from();
+
     //std::cout << our_file << "\n";
     if(our_file == "")
         return 0;
@@ -48,10 +44,11 @@ int main() {
         askForFilePassword();
         create_sample_data();
     }
-    lib.printAllRecords();
+    //lib.printAllRecords();
     mainFunctionality();
+//    create_sample_data();
     lib.write();
-    lib.printAllRecords();
+   // lib.printAllRecords();
 
 
 
@@ -101,7 +98,6 @@ void display_files(){
 
 bool file_exists(const fs::path& a){
     if (std::filesystem::exists(a)) {
-        std::cout << "Successfully found file\n";
         return true;
     }
     else {
@@ -226,15 +222,47 @@ void mainFunctionality(){
         else if (choice == "0")
             return;
         else {
-            std::cout << "Wrong input!";
-            continue;
+            std::cout << "Wrong input!\n";
+            choice="";
         }
         choice = mainMenu();
     }
 }
 
-void searchPassword() {
+std::vector<PasswordRecord> searchPassword() {
+    std::string choice;
+    fmt::print("By which parameter would you like to get your record?\n"
+           "Press 1 to search by name\n"
+           "Press 2 to search by password\n"
+           "Press 3 to search by category\n"
+           "Press 4 to search by website\n"
+           "Press 5 to search by login\n"
+           "Press 0 to exit\n");
 
+    while (choice != "0") {
+        std::cin >> choice;
+        if (choice == "1") {
+            return lib.searchRecordBy("name");
+        }
+        else if (choice == "2") {
+            return lib.searchRecordBy("password");
+        }
+        else if (choice == "3") {
+            return lib.searchRecordBy("category");
+        }
+        else if (choice == "4") {
+            return lib.searchRecordBy("website");
+        }
+        else if (choice == "5") {
+            return lib.searchRecordBy("login");
+        }
+        else if (choice == "0")
+            return {};
+        else {
+            std::cout << "Wrong input!\n";
+            continue;
+        }
+    }
 }
 
 void sortPasswords() {
@@ -242,10 +270,86 @@ void sortPasswords() {
 }
 
 void deletePassword() {
+    std::cerr << "These passwords are being deleted!!!\n"
+              << "Are you sure about that?\ny/n\n";
+for(auto i : searchPassword()){
 
+    std::string choice;
+    std::cin >> choice;
+    if(choice == "y" or choice == "yes")
+        lib.deleteRecord(i);
+    else
+        continue;
+}
+}
+
+
+bool askForConfirmation(){
+    fmt::print("Are you sure?");
+    std::string choice;
+    std::cin >> choice;
+    if(choice == "y" or choice == "yes")
+        return true;
+    else
+        return false;
 }
 
 void editPassword() {
+    for(auto i : searchPassword()){
+        std::string choice;
+        fmt::print ("Press 1 to edit the name\n"
+                    "Press 2 to edit the password\n"
+                    "Press 3 to edit the category\n"
+                    "Press 4 to edit the website\n"
+                    "Press 5 to edit the login\n"
+                    "Press 0 to exit\n");
+        std::cin >> choice;
+        while (choice != "0") {
+            std::string newEntry = "";
+            std::cout << "What will be the new input?\n";
+            std::cin >> newEntry;
+            if (choice == "1")
+                if (askForConfirmation()) {
+                    i.setName(newEntry);
+                    break;
+                }
+            else if (choice == "2")
+                if(askForConfirmation()) {
+                    i.setPass(newEntry);
+                    break;
+                }
+            else if (choice == "3")
+                if(askForConfirmation() and lib.getCategories().contains(newEntry)) {
+                    i.setCategory(newEntry);
+                    break;
+                }
+                else {
+                    std::cout << "Such category doesn't exist. Would you like to create it?";
+                    if (askForConfirmation()) {
+                        lib.addCategory(newEntry);
+                        i.setCategory(newEntry);
+                        break;
+                    }
+                }
+            else if (choice == "4")
+                if(askForConfirmation()) {
+                    i.setWebsite(newEntry);
+                    break;
+                }
+            else if (choice == "5")
+                if(askForConfirmation()) {
+                    i.setLogin(newEntry);
+                    break;
+                }
+            else if (choice == "0")
+                return;
+            else {
+                std::cout << "Wrong input!";
+                continue;
+            }
+        }
+    }
+
 
 }
 
