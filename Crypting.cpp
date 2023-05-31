@@ -7,7 +7,6 @@
 #include "Crypting.h"
 #include <iostream>
 
-std::string Crypting::filePassword;
 
 
 // Function to encode a text file using XOR encryption

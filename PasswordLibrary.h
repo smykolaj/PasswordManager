@@ -15,6 +15,11 @@ class PasswordLibrary {
 private:
     //file
     fs::path workingFileName;
+    std::string filePassword;
+public:
+    void setFilePassword(const string &filePassword);
+
+private:
     //time
     std::time_t lastReadTime;
     //all passwords

@@ -13,7 +13,7 @@ void display_files();
 bool file_exists(const fs::path& a);
 void create_sample_data();
 fs::path read_from();
-void askForFilePassword();
+std::string askForFilePassword();
 bool askForConfirmation();
 //commands
 void mainFunctionality();
@@ -36,12 +36,12 @@ int main() {
 
     lib.setWorkingFileName(our_file);
 
+    const std::string filePassword = askForFilePassword();
+    lib.setFilePassword(filePassword);
 
     if(file_exists(our_file)) {
-        askForFilePassword();
         lib.read();
     } else {
-        askForFilePassword();
         create_sample_data();
     }
     //lib.printAllRecords();
@@ -194,11 +194,12 @@ fs::path read_from(){
     return our_file;
 }
 
-void askForFilePassword(){
+std::string askForFilePassword(){
     std::cout << "Please enter the password for the chosen file\n";
     std::string pass;
     std::cin >> pass;
-    Crypting::setFilePassword(pass);
+    //Crypting::setFilePassword(pass);
+    return pass;
 }
 
 void mainFunctionality(){

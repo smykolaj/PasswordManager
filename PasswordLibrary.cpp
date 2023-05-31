@@ -42,7 +42,11 @@ void PasswordLibrary::write() const {
     }
 
     std::ofstream outFile(workingFileName);
-    Crypting::process(&memoryStream, &outFile);
+
+    Crypting crypting;
+    crypting.setFilePassword(filePassword);
+    crypting.process(&memoryStream, &outFile);
+
     outFile.close();
 }
 
@@ -50,7 +54,9 @@ bool PasswordLibrary::read() {
 
     std::ifstream inFile(workingFileName);
     std::stringstream memoryStream;
-    if(!Crypting::process(&inFile, &memoryStream)){
+    Crypting crypting;
+    crypting.setFilePassword(filePassword);
+    if(!crypting.process(&inFile, &memoryStream)){
         return false;
     }
 
@@ -209,5 +215,9 @@ void PasswordLibrary::deleteRecord(PasswordRecord rec) {
     auto range_remove = std::ranges::remove_if(records, [rec](PasswordRecord s) -> bool{ (s.getName() == rec.getName() && s.getPass()==rec.getPass());});
     records.erase(range_remove.begin(),range_remove.end());
 
+}
+
+void PasswordLibrary::setFilePassword(const string &filePassword) {
+    PasswordLibrary::filePassword = filePassword;
 }
 
