@@ -8,25 +8,97 @@
 
 namespace fs = std::filesystem;
 
+/**
+ * prints out the message asking user to choose the method by which he finds the source file
+ */
 void starting_message();
+
+/**
+ * prints out the existing .txt files in this directory
+ */
 void display_files();
+
+/**
+ * returns true, if a file with such path exists
+ */
 bool file_exists(const fs::path& a);
+
+/**
+ * puts sample data with password records into the library
+ */
 void create_sample_data();
+
+/**
+ * returns the name of the file which the application is done on, depending on the user input
+ */
 fs::path read_from();
+
+/**
+ * returns a string where the user sets the password for a file
+ */
 std::string askForFilePassword();
+
+/**
+ * returns true if input is "yes" or "y" and in other cases false
+ */
 bool askForConfirmation();
+
 //commands
+
+/**
+ * starts functions depending on the user input
+ */
 void mainFunctionality();
-std::string mainMenu();
+
+/**
+ * returns the alias of a function the user chose
+ */
+std::string showMainMenu();
+
+/**
+ * creates a new category
+ */
 void createNewCategory();
+
+/**
+ * deletes the category, and all passwords associated with it
+ */
 void deleteCategory();
+
+/**
+ * creates a new PasswordRecord and put it into the library
+ */
 void addPassword();
+
+/**
+ * changes info of an existing password record
+ */
 void editPassword();
+
+/**
+ * deletes the password record(s)
+ */
 void deletePassword();
+
+/**
+ * sorts records in the library depending on the attributes we se to sort
+ */
 void sortPasswords();
+
+/**
+ * returns a vector of password records that satisfy the search results
+ */
 std::vector<PasswordRecord*> searchPassword();
+
+/**
+ * checks whether all conditions of a safe password are considered in the password the user entered
+ */
 std::string checkForStrength();
 
+/**
+ * returns a generated randomly password depending on what user wants to use in it,
+ * if no parameter is chosen, the password returned consists only of digits
+ */
 std::string createRandomPassword();
 
 int main() {
@@ -48,7 +120,7 @@ int main() {
             lib.write();
         }
     } else {
-        create_sample_data();
+        //create_sample_data();
         mainFunctionality();
         lib.write();
     }
@@ -58,9 +130,7 @@ int main() {
 
     return 0;
 }
-/**
- * prints out the message asking user to choose the method by which he finds the source file
- */
+
 void starting_message(){
     fmt::print("Greetings!\n"
                "Please choose the source file\n"
@@ -70,7 +140,7 @@ void starting_message(){
                "Press 0 to exit\n");
 }
 
-std::string mainMenu(){
+std::string showMainMenu(){
     fmt::print("Press 1 to add a new category\n"
                "Press 2 to delete a category and all assigned passwords\n"
                "Press 3 to add a password\n"
@@ -78,6 +148,7 @@ std::string mainMenu(){
                "Press 5 to delete passwords\n"
                "Press 6 to sort passwords\n"
                "Press 7 to search passwords\n"
+               "Press 8 to print all passwords\n"
                "Press 0 to exit\n");
     std::string choice;
     std::cin >> choice;
@@ -207,7 +278,7 @@ std::string askForFilePassword(){
 
 void mainFunctionality(){
     std::string choice;
-    choice = mainMenu();
+    choice = showMainMenu();
     while (choice != "0") {
         if (choice == "1")
             createNewCategory();
@@ -223,13 +294,15 @@ void mainFunctionality(){
             sortPasswords();
         else if (choice == "7")
             searchPassword();
+        else if (choice == "8")
+            lib.printAllRecords();
         else if (choice == "0")
             return;
         else {
             std::cout << "Wrong input!\n";
             choice="";
         }
-        choice = mainMenu();
+        choice = showMainMenu();
     }
 }
 
@@ -271,29 +344,36 @@ std::vector<PasswordRecord*> searchPassword() {
 
 void sortPasswords() {
     std::vector<std::string> sortBy;
-    for(int i = 0; i < 2; i++) {
+
+    std::string choice;
+
+    while(choice != "0") {
         std::cout << "Please enter the attribute you would like to sort by:\n"
                      "1 for category,\n"
                      "2 for name,\n"
-                     "3 for website\n ";
+                     "3 for website\n "
+                     "0 to finish\n";
 
-        std::string choice;
         std::cin >> choice;
         if (choice == "1")
             sortBy.push_back("category");
-        if (choice == "1")
+        if (choice == "2")
             sortBy.push_back("name");
-        if (choice == "1")
+        if (choice == "3")
             sortBy.push_back("website");
     }
-    lib.sortRecords(sortBy);
-    lib.printAllRecords();
+
+    if( !sortBy.empty()) {
+        lib.sortRecords(sortBy);
+        lib.printAllRecords();
+    }
 }
 
 void deletePassword() {
+
+for(auto i : searchPassword()){
     std::cerr << "These passwords are being deleted!!!\n"
               << "Are you sure about that?\ny/n\n";
-for(auto i : searchPassword()){
 
     std::string choice;
     std::cin >> choice;

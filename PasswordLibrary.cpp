@@ -307,7 +307,6 @@ public:
       }
 };
 
-
 void PasswordLibrary::sortRecords(const std::vector<std::string> &sortBy) {
     std::sort(records.begin(), records.end(), SortCompare(sortBy));
 }
