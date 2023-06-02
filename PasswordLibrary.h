@@ -33,6 +33,7 @@ public:
 
     // Records
     void addRecord(const PasswordRecord& rec );
+    void createRecord(std::string name, std::string password, std::string category, std::string website, std::string login);
     void deleteRecord(const PasswordRecord& rec);
     void deleteRecordByCategory(const std::string& categ);
 
@@ -43,8 +44,10 @@ public:
     void printRecord(PasswordRecord rec) const;
     void printAllRecords() const;
     std::vector<PasswordRecord*> searchRecordBy(const std::string& attribute)const ;
+    bool isUnique(const std::string& pass)const;
+    void sortRecords(const std::vector<std::string>& sortBy);
 
-    // Categories
+        // Categories
     void addCategory(const std::string& category);
     void deleteCategory(const std::string& category);
     std::set <std::string> getCategories();

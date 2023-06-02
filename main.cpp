@@ -25,12 +25,15 @@ void editPassword();
 void deletePassword();
 void sortPasswords();
 std::vector<PasswordRecord*> searchPassword();
+std::string checkForStrength();
+
+std::string createRandomPassword();
 
 int main() {
 
+
     fs::path our_file = read_from();
 
-    //std::cout << our_file << "\n";
     if(our_file == "")
         return 0;
 
@@ -40,15 +43,15 @@ int main() {
     lib.setFilePassword(filePassword);
 
     if(file_exists(our_file)) {
-        lib.read();
+        if(lib.read()) {
+            mainFunctionality();
+            lib.write();
+        }
     } else {
         create_sample_data();
+        mainFunctionality();
+        lib.write();
     }
-    //lib.printAllRecords();
-    mainFunctionality();
-//    create_sample_data();
-    lib.write();
-   // lib.printAllRecords();
 
 
 
@@ -267,7 +270,24 @@ std::vector<PasswordRecord*> searchPassword() {
 }
 
 void sortPasswords() {
+    std::vector<std::string> sortBy;
+    for(int i = 0; i < 2; i++) {
+        std::cout << "Please enter the attribute you would like to sort by:\n"
+                     "1 for category,\n"
+                     "2 for name,\n"
+                     "3 for website\n ";
 
+        std::string choice;
+        std::cin >> choice;
+        if (choice == "1")
+            sortBy.push_back("category");
+        if (choice == "1")
+            sortBy.push_back("name");
+        if (choice == "1")
+            sortBy.push_back("website");
+    }
+    lib.sortRecords(sortBy);
+    lib.printAllRecords();
 }
 
 void deletePassword() {
@@ -283,7 +303,6 @@ for(auto i : searchPassword()){
         continue;
 }
 }
-
 
 bool askForConfirmation(){
     fmt::print("Are you sure?");
@@ -356,7 +375,97 @@ void editPassword() {
 }
 
 void addPassword() {
+    std::string name, password, category, website, login, choice;
+    std::cout << "Please enter a name for the new record\n";
+    std::cin >> name;
+    std::cout << "Please enter 1 if you want to enter you own password\n"
+    << "Please enter 2 if you want a randomly generated password\n";
+    std::cin >> choice;
+    if(choice == "1"){
+        password = checkForStrength();
+    }
+    else if (choice == "2"){
+        password = createRandomPassword();
+    }
+    std::cout << "Please enter a category for the new record\n";
+    std::cin >> category;
+    while(!lib.getCategories().contains(category)) {
+        category = "";
+        std::cout << "Such category doesn't exist\n";
+        createNewCategory();
+        std::cout << "Please enter a category for the new record\n";
+        std::cin >> category;
+    }
+    std::cout << "Please enter a website for the new record\n";
+    std::cin >> website;
+    std::cout << "Please enter a login for the new record\n";
+    std::cin >> login;
+    std::cout << "Done. Would you like to finish? Enter yes or 0 to exit\n";
+    choice = "";
+    std::cin >> choice;
+    if(choice == "y" or choice == "yes")
+        lib.createRecord(name, password, category, website, login);
+    else
+        return;
+}
 
+std::string createRandomPassword() {
+    std::vector<char> uppercaseLetters = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+                                          'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+    std::vector<char> lowercaseLetters = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+                                          'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+    std::vector<char> specialChars = {'!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '-', '=',
+                                      '[', ']', '{', '}', '<', '>', '?'};
+    std::vector<char> digits = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
+    std::string createdPassword;
+    bool includeChar = false;
+    bool includeUpper = false;
+    bool includeLower = false;
+    int length;
+
+    std::cout << "Please enter the length of your generated password\n";
+    std::cin >> length;
+    std::string choice;
+
+    std::cout << "Please say if you want to include special characters\n";
+    std::cin >> choice;
+    if(choice == "yes" or choice == "y")
+        includeChar = true;
+
+    choice = "";
+    std::cout << "Please say if you want to include upper-case characters\n";
+    std::cin >> choice;
+    if(choice == "yes" or choice == "y")
+        includeUpper = true;
+
+    choice = "";
+    std::cout << "Please say if you want to include lower-case characters\n";
+    std::cin >> choice;
+    if(choice == "yes" or choice == "y")
+        includeLower = true;
+
+    std::vector<char> collection;
+    collection.insert(collection.end(), digits.begin(), digits.end());
+
+    if(includeChar) {
+        createdPassword.push_back(specialChars.at(std::rand() % specialChars.size()));
+        collection.insert(collection.end(), specialChars.begin(), specialChars.end());
+    }
+    if(includeUpper) {
+        createdPassword.push_back(uppercaseLetters.at(std::rand() % uppercaseLetters.size()));
+        collection.insert(collection.end(), uppercaseLetters.begin(), uppercaseLetters.end());
+    }
+    if(includeLower) {
+        createdPassword.push_back(lowercaseLetters.at(std::rand() % lowercaseLetters.size()));
+        collection.insert(collection.end(), lowercaseLetters.begin(), lowercaseLetters.end());
+    }
+    std::srand((unsigned) time(nullptr));
+    for(int i = createdPassword.size(); i < length; i++ ){
+        int rand = std::rand() % collection.size();
+        createdPassword.push_back(collection.at(rand));
+
+    }
+    return createdPassword;
 }
 
 void createNewCategory() {
@@ -408,4 +517,55 @@ void deleteCategory() {
     }
 
 
+}
+
+std::string checkForStrength(){
+    std::string forChecking;
+    std::cout << "Please enter a password for the new record\n";
+    std:: cin >> forChecking;
+    bool goodLength = false;
+    bool hasLower = false;
+    bool hasUpper = false;
+    bool hasNumber = false;
+    bool hasChar = false;
+    bool isUnique = lib.isUnique(forChecking);
+    for(char i : forChecking){
+        if(islower(i))
+            hasLower = true;
+        else if(isdigit(i))
+            hasNumber = true;
+        else if(isupper(i))
+            hasUpper = true;
+        else
+            hasChar = true;
+    }
+    if(forChecking.length() >= 8 )
+        goodLength = true;
+    if(hasChar && hasUpper && hasNumber && hasLower && goodLength && isUnique) {
+        std::cout << "Wow! Such a strong password)\n";
+        return forChecking;
+    }
+    else{
+        std::cout << "Your password is weak. ";
+        if(!isUnique)
+            std::cout << "Already used before. ";
+        if(!hasLower)
+            std::cout << "Doesn't have lower-case letter. ";
+        if(!hasNumber)
+            std::cout << "Doesn't have a number. ";
+        if(!hasUpper)
+            std::cout << "Doesn't have upper-case letter. ";
+        if(!goodLength)
+            std::cout << "Doesn't have at least 9 characters. ";
+        if(!hasChar)
+            std::cout << "Doesn't have a special character. ";
+        std::string choice;
+        std::cout << "\nWould you like to use it anyway?\n";
+        std::cin >> choice;
+        if(choice == "yes" or choice == "y")
+            return forChecking;
+        else{
+            return checkForStrength();
+        }
+    }
 }

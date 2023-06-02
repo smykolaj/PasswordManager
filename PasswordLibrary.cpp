@@ -86,7 +86,7 @@ bool PasswordLibrary::read() {
     // load last read time
     char buff[20];
     inFile.get(buff, 20);
-    std::cout << buff << "\n";
+    //std::cout << buff << "\n";
 
     // decode whole file to memory stream
     std::stringstream memoryStream;
@@ -165,12 +165,13 @@ void PasswordLibrary::printAllRecords() const{
 }
 
 void PasswordLibrary::printRecord(PasswordRecord rec) const {
-    std::cout << rec.getName() << "\n";
-    std::cout << rec.getPass()<< "\n";
-    std::cout << rec.getCategory()<< "\n";
-    std::cout << rec.getWebsite()<< "\n";
-    std::cout << rec.getLogin()<< "\n";
-    std::cout << "\n";
+    fmt::print("-------------------------------------------------\n");
+    std::cout << "Name:     " << rec.getName() << "\n";
+    std::cout << "Password: " << rec.getPass()<< "\n";
+    std::cout << "Category: " << rec.getCategory()<< "\n";
+    std::cout << "Website:  " << rec.getWebsite()<< "\n";
+    std::cout << "Login:    " << rec.getLogin()<< "\n";
+    fmt::print("-------------------------------------------------\n");
 
 }
 
@@ -264,3 +265,55 @@ void PasswordLibrary::setFilePassword(const string &filePassword) {
     PasswordLibrary::filePassword = filePassword;
 }
 
+bool PasswordLibrary::isUnique(const std::string& pass)const{
+    for(auto i : records)
+        if (i.getPass() == pass)
+            return false;
+    return true;
+
+}
+
+class SortCompare
+{
+private:
+    std::vector<std::string> sortBy;
+public:
+    SortCompare(const std::vector<std::string> &sortBy)
+      : sortBy(sortBy){}
+
+      bool operator()(const PasswordRecord& rec1, const PasswordRecord& rec2) const
+      {
+        for(auto i : sortBy){
+            if(i == "name")
+            {
+                if (rec1.getName()  != rec2.getName())
+                    return rec1.getName() < rec2.getName();
+            }
+
+            if(i == "category")
+            {
+                if (rec1.getCategory() != rec2.getCategory())
+                    return rec1.getCategory() < rec2.getCategory();
+            }
+
+            if(i == "website")
+            {
+                if (rec1.getWebsite() != rec2.getWebsite())
+                    return rec1.getWebsite() < rec2.getWebsite();
+            }
+        }
+
+        return true;
+      }
+};
+
+
+void PasswordLibrary::sortRecords(const std::vector<std::string> &sortBy) {
+    std::sort(records.begin(), records.end(), SortCompare(sortBy));
+}
+
+void PasswordLibrary::createRecord(std::string name, std::string password, std::string category, std::string website,
+                                   std::string login) {
+    addRecord(PasswordRecord(name,password,category,website,login));
+
+}
