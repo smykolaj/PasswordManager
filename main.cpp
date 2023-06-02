@@ -351,7 +351,7 @@ void sortPasswords() {
         std::cout << "Please enter the attribute you would like to sort by:\n"
                      "1 for category,\n"
                      "2 for name,\n"
-                     "3 for website\n "
+                     "3 for website\n"
                      "0 to finish\n";
 
         std::cin >> choice;
